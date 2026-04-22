@@ -1,14 +1,14 @@
 import { useState } from "react";
-import Home from "./components/Home";
+import CourseScreen from "./components/CourseScreen";
+import UnitScreen from "./components/UnitScreen";
+import LessonsScreen from "./components/LessonsScreen";
 import PracticeSession from "./components/PracticeSession";
 import { SUBJECTS } from "./data/geometry/index";
 
 export default function App() {
-  const [subject, setSubject]       = useState("geometry");
+  const [subject,     setSubject]     = useState(null);
+  const [unit,        setUnit]        = useState(null);
   const [activeTopic, setActiveTopic] = useState(null);
-  const [openUnits, setOpenUnits]   = useState({});
-
-  const toggleUnit = (id) => setOpenUnits(prev => ({ ...prev, [id]: !prev[id] }));
 
   if (activeTopic) {
     return (
@@ -19,14 +19,30 @@ export default function App() {
     );
   }
 
+  if (unit) {
+    return (
+      <LessonsScreen
+        unit={unit}
+        onSelectTopic={setActiveTopic}
+        onBack={() => setUnit(null)}
+      />
+    );
+  }
+
+  if (subject) {
+    return (
+      <UnitScreen
+        subject={subject}
+        onSelectUnit={setUnit}
+        onBack={() => setSubject(null)}
+      />
+    );
+  }
+
   return (
-    <Home
+    <CourseScreen
       subjects={SUBJECTS}
-      activeSubject={subject}
-      onSubjectChange={setSubject}
-      onSelectTopic={setActiveTopic}
-      openUnits={openUnits}
-      onToggleUnit={toggleUnit}
+      onSelectSubject={setSubject}
     />
   );
 }
