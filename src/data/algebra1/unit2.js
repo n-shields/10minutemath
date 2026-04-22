@@ -83,22 +83,26 @@ export default {
       title: "Systems by Substitution",
       target: "I can solve systems of equations by substituting a variable or an expression.",
       generate() {
-        const x = rand(1, 6), y = rand(1, 6);
-        const a = rand(1, 4), b = rand(1, 4);
-        // y = ax + b (first eq, solved for y)
-        const rhs = a * x + b;
-        if (rhs !== y + (a * x + b - y)) { /* ensure consistent */ }
-        // second eq: cx + dy = e
+        const x = rand(1, 5), y = rand(1, 5);
+        const a = rand(1, 3), offset = rand(-3, 3);
+        const b = y - a * x + offset; // b chosen so y = ax + b has solution (x,y) - wait, recalc
+        const m1 = a, b1 = y - a * x;
         const c = rand(1, 3), d = rand(1, 3);
         const e = c * x + d * y;
         const correct = `(${x}, ${y})`;
         const wrong = [`(${x+1}, ${y})`, `(${x}, ${y+1})`, `(${-x}, ${y})`];
         const choices = shuffle([correct, ...wrong]);
         return {
-          question: `Solve the system:\n  y = ${a}x + ${a*x+b-y}\n  ${c}x + ${d}y = ${e}`,
+          question: `Solve the system:\n  y = ${m1}x + ${b1 >= 0 ? b1 : b1}\n  ${c}x + ${d}y = ${e}`,
           choices,
           correctIndex: choices.indexOf(correct),
-          explanation: `Substitute y = ${a}x + ${a*x+b-y} into the second equation and solve for x = ${x}, then y = ${y}.`,
+          explanation: `Substitute y = ${m1}x + ${b1} into the second equation and solve for x = ${x}, then y = ${y}.`,
+          graph: {
+            type: "twolines",
+            lines: [{ m: m1, b: b1 }, { m: -c/d, b: e/d }],
+            intersection: [x, y],
+            xRange: [x-5, x+5], yRange: [y-5, y+5],
+          },
         };
       },
     },
@@ -107,8 +111,8 @@ export default {
       title: "Systems by Elimination",
       target: "I can solve systems of equations by adding or subtracting them to eliminate a variable.",
       generate() {
-        const x = rand(1, 6), y = rand(1, 6);
-        const a = rand(1, 4), b = rand(1, 4), c = rand(1, 4), d = rand(1, 4);
+        const x = rand(1, 5), y = rand(1, 5);
+        const a = rand(1, 3), b = rand(1, 3), c = rand(1, 3), d = rand(1, 3);
         const e1 = a * x + b * y;
         const e2 = c * x + d * y;
         const correct = `(${x}, ${y})`;
@@ -119,6 +123,12 @@ export default {
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: `Multiply equations to match coefficients, then add or subtract to eliminate one variable. Solution: x = ${x}, y = ${y}.`,
+          graph: {
+            type: "twolines",
+            lines: [{ m: -a/b, b: e1/b }, { m: -c/d, b: e2/d }],
+            intersection: [x, y],
+            xRange: [x-5, x+5], yRange: [y-5, y+5],
+          },
         };
       },
     },
@@ -128,19 +138,24 @@ export default {
       target: "I can tell how many solutions a system has by graphing or analyzing the equations.",
       generate() {
         const type = pick(["one", "none", "infinite"]);
-        let eq1, eq2, exp;
-        const m = rand(1, 4), b1 = rand(1, 8), b2 = rand(1, 8);
+        let eq1, eq2, exp, lines;
+        const m = rand(1, 3), b1 = rand(-3, 3);
         if (type === "one") {
+          const m2 = m + rand(1, 2), b2 = rand(-3, 3);
           eq1 = `y = ${m}x + ${b1}`;
-          eq2 = `y = ${m+1}x + ${b1}`;
-          exp = `Different slopes (${m} ≠ ${m+1}) → lines intersect at exactly one point.`;
+          eq2 = `y = ${m2}x + ${b2}`;
+          lines = [{ m, b: b1 }, { m: m2, b: b2 }];
+          exp = `Different slopes (${m} ≠ ${m2}) → lines intersect at exactly one point.`;
         } else if (type === "none") {
+          const b2 = b1 + rand(2, 4);
           eq1 = `y = ${m}x + ${b1}`;
-          eq2 = `y = ${m}x + ${b1+2}`;
+          eq2 = `y = ${m}x + ${b2}`;
+          lines = [{ m, b: b1 }, { m, b: b2 }];
           exp = `Same slope (${m}), different y-intercepts → parallel lines, no solution.`;
         } else {
           eq1 = `y = ${m}x + ${b1}`;
           eq2 = `${2*m}x − 2y = ${-2*b1}`;
+          lines = [{ m, b: b1 }, { m, b: b1 }];
           exp = `Both equations describe the same line → infinitely many solutions.`;
         }
         const correct = type === "one" ? "One solution" : type === "none" ? "No solution" : "Infinitely many solutions";
@@ -151,6 +166,7 @@ export default {
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: exp,
+          graph: { type: "twolines", lines, xRange: [-5, 5], yRange: [-6, 6] },
         };
       },
     },
@@ -159,26 +175,23 @@ export default {
       title: "Solving One-Variable Inequalities",
       target: "I can solve one-variable inequalities and interpret the solutions.",
       generate() {
-        const x = rand(1, 8);
-        const a = rand(2, 5), b = rand(1, 15);
+        const sol = rand(-3, 5);
+        const a = rand(2, 4), b = rand(1, 10);
         const op = pick(["<", ">", "≤", "≥"]);
-        const rhs = a * x + b + (op === "<" || op === "≤" ? 1 : -1);
-        // ax + b op rhs  → x op (rhs - b)/a
-        const sol = (rhs - b) / a;
-        const solStr = Number.isInteger(sol) ? `${sol}` : `${(rhs-b)}/${a}`;
-        const flipMap = { "<": "<", ">": ">", "≤": "≤", "≥": "≥" };
-        const correct = `x ${op} ${solStr}`;
+        const rhs = a * sol + b + (op === "<" || op === "≤" ? 1 : -1);
+        const correct = `x ${op} ${sol}`;
         const wrong = [
-          `x ${op === "<" ? ">" : op === ">" ? "<" : op === "≤" ? "≥" : "≤"} ${solStr}`,
-          `x ${op} ${+solStr + 1}`,
-          `x ${op} ${+solStr - 1}`,
+          `x ${op === "<" ? ">" : op === ">" ? "<" : op === "≤" ? "≥" : "≤"} ${sol}`,
+          `x ${op} ${sol + 1}`,
+          `x ${op} ${sol - 1}`,
         ];
         const choices = shuffle([correct, ...wrong]);
         return {
           question: `Solve: ${a}x + ${b} ${op} ${rhs}`,
           choices,
           correctIndex: choices.indexOf(correct),
-          explanation: `Subtract ${b}: ${a}x ${op} ${rhs - b}. Divide by ${a}: x ${op} ${solStr}.`,
+          explanation: `Subtract ${b}: ${a}x ${op} ${rhs - b}. Divide by ${a}: x ${op} ${sol}.`,
+          graph: { type: "numberline", value: sol, op, min: sol-4, max: sol+4 },
         };
       },
     },

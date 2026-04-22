@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import MiniGraph from "./MiniGraph";
 import "./PracticeSession.css";
 
 export default function PracticeSession({ topic, onBack }) {
@@ -45,6 +46,8 @@ export default function PracticeSession({ topic, onBack }) {
 
       <div className="ps-card">
         <p className="ps-question">{problem.question}</p>
+
+        {problem.graph && <MiniGraph graph={problem.graph}/>}
 
         <div className="ps-choices">
           {problem.choices.map((choice, i) => {

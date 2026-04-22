@@ -23,6 +23,7 @@ export default {
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: `y = ${a} · ${b}^${x} = ${a} · ${Math.pow(b, x)} = ${result}.`,
+          graph: { type: "exponential", a, b, xRange: [0, x + 1] },
         };
       },
     },
@@ -45,6 +46,7 @@ export default {
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: `Decay factor = 1 − ${pct/100} = ${b}. y = ${a} · ${b}^${x} = $${result}.`,
+          graph: { type: "exponential", a, b, xRange: [0, x + 1] },
         };
       },
     },

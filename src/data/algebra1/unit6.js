@@ -94,6 +94,7 @@ export default {
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: exp,
+          graph: { type: "parabola", a, h: vertex_x, k: vertex_y, roots: [r1, r2] },
         };
       },
     },
@@ -129,6 +130,7 @@ export default {
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: exp,
+          graph: { type: "parabola", a, h, k },
         };
       },
     },

@@ -123,6 +123,7 @@ export default {
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: `Standard form: (x−h)²+(y−k)²=r². With center (${h},${k}) and r=${r}: ${correct}.`,
+          graph: { type: "circle", h, k, r },
         };
       },
     },
@@ -296,6 +297,7 @@ export default {
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: `Point-slope form: y − y₁ = m(x − x₁). Substitute: ${correct}.`,
+          graph: { type: "line", m: rise/run, b: y1 - (rise/run)*x1 },
         };
       },
     },
@@ -321,6 +323,7 @@ export default {
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: `Parallel lines have equal slopes. The slope is also ${m}.`,
+          graph: { type: "twolines", lines: [{ m: rise/run, b: 1 }, { m: rise/run, b: -2 }], xRange: [-5, 5], yRange: [-6, 6] },
         };
       },
     },
@@ -348,6 +351,7 @@ export default {
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: `Perpendicular slopes are negative reciprocals. The negative reciprocal of ${m} is ${correct}.`,
+          graph: { type: "twolines", lines: [{ m: rise/run, b: 1 }, { m: perpRise/perpRun, b: -1 }], xRange: [-5, 5], yRange: [-6, 6] },
         };
       },
     },

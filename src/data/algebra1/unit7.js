@@ -21,11 +21,13 @@ export default {
           `x = ${r1 * r2}`,
         ].filter(w => w !== correct);
         const choices = shuffle([correct, ...wrong.slice(0, 3)]);
+        const vx = (r1 + r2) / 2, vy = (vx - r1) * (vx - r2);
         return {
           question: `Solve: (x${r1Str})(x${r2Str}) = 0`,
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: `Zero product property: set each factor to zero.\nx${r1Str} = 0 → x = ${r1}\nx${r2Str} = 0 → x = ${r2}`,
+          graph: { type: "parabola", a: 1, h: vx, k: vy, roots: r1 === r2 ? [r1] : [r1, r2] },
         };
       },
     },
@@ -47,11 +49,13 @@ export default {
           `(x − ${r1 + 1})(x − ${r2 - 1})`,
         ].filter(w => w !== correct);
         const choices = shuffle([correct, ...wrong.slice(0, 3)]);
+        const vx2 = (r1 + r2) / 2, vy2 = (vx2 - r1) * (vx2 - r2);
         return {
           question: `Factor: x²${bStr}${cStr}`,
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: `Find two numbers that multiply to ${c} and add to ${b}: ${-r1} and ${-r2}.\nFactored form: ${correct}.`,
+          graph: { type: "parabola", a: 1, h: vx2, k: vy2, roots: [r1, r2] },
         };
       },
     },
@@ -101,11 +105,13 @@ export default {
           `x = ${r1 * r2}`,
         ].filter(w => w !== correct);
         const choices = shuffle([correct, ...wrong.slice(0, 3)]);
+        const vx3 = (r1 + r2) / 2, vy3 = (vx3 - r1) * (vx3 - r2);
         return {
           question: `Use the quadratic formula to solve: x²${bStr}${cStr} = 0`,
           choices,
           correctIndex: choices.indexOf(correct),
           explanation: `x = (−${b} ± √(${b}² − 4·${c})) / 2 = (${-b} ± √${disc}) / 2 = (${-b} ± ${Math.sqrt(disc)}) / 2.\nx = ${r1} or x = ${r2}.`,
+          graph: { type: "parabola", a: 1, h: vx3, k: vy3, roots: r1 === r2 ? [r1] : [r1, r2] },
         };
       },
     },
